@@ -1,16 +1,23 @@
 "use client"
-import CardWrapper from "@/components/auth/CardWrapper"
 import * as z from "zod"
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState, useTransition } from "react";
+
+import { login } from "@/actions/login"
 import { LoginSchema } from "@/schemas";
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import FormError from "@/components/FormError"
 import FormSuccess from "@/components/FormSuccess"
-import { zodResolver } from "@hookform/resolvers/zod";
+import CardWrapper from "@/components/auth/CardWrapper"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 
 export default function LoginForm(){
+    const [error, setError] = useState<string | undefined>()
+    const [success, setSuccess] = useState<string | undefined>()
+    const [isPending, startTransition] = useTransition()
+
     const form = useForm<z.infer<typeof LoginSchema>>({
         resolver: zodResolver(LoginSchema),
         defaultValues: {
@@ -20,7 +27,13 @@ export default function LoginForm(){
     })
 
     const onSubmit = (values: z.infer<typeof LoginSchema>) =>{
-        console.log(values)
+        startTransition(() => {
+            login(values)
+            .then((data) =>{
+                setError(data.error)
+                setSuccess(data.success)
+            })
+        })
     }
 
     return (
@@ -41,6 +54,7 @@ export default function LoginForm(){
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            disabled={isPending}
                                             placeholder="johndoe@example.com"
                                             type="email" />
                                     </FormControl>
@@ -57,6 +71,7 @@ export default function LoginForm(){
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            disabled={isPending}
                                             placeholder="******"
                                             type="password" />
                                     </FormControl>
@@ -65,9 +80,10 @@ export default function LoginForm(){
                             )}
                         />
                     </div>
-                    <FormError message=""/>
-                    <FormSuccess message=""/>
+                    <FormError message={error}/>
+                    <FormSuccess message={success}/>
                     <Button 
+                        disabled={isPending}
                         type="submit"
                         className="w-full">
                         Login
