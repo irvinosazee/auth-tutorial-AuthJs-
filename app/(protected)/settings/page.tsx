@@ -2,6 +2,8 @@ import {auth, signOut} from "@/auth";
 export default async function SettingsPage() {
     const session = await auth();
 
+    if (!session) return null
+
     console.log("Session:", session);
     return (
         <div>
