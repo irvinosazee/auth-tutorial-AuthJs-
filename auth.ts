@@ -22,18 +22,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
     },
     callbacks: {
-        // async signIn({ user }) {
-        //     if (!user.id) {
-        //         return false; // User ID is missing
-        //     }
-        //     const existingUser = await getUserById(user.id);
+        async signIn({ user, account }) {
+            if (account?.provider !== "credentials") {
+                return true; // Allow sign in for other providers
+            }
 
-        //     if (!existingUser || !existingUser?.emailVerified) {
-        //         return false; // User not found
-        //     }
+            if (!user.id) return false; // User is not defined
+
+            const existingUser = await getUserById(user.id);
+
+            if (!existingUser?.emailVerified) {
+                return false; // Prevent Signin with out email verification
+            }
             
-        //     return true; // Allow sign in
-        // },
+            return true; // Allow sign in
+        },
         async session({ session, token }) {
             if (token.sub && session.user) {
                 session.user.id = token.sub
