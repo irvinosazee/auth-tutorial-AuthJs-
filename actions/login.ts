@@ -20,6 +20,10 @@ export const login = async (values: z.infer<typeof LoginSchema>) =>{
     const existingUser = await getUserByEmail(email)
 
     if (!existingUser || !existingUser.email || !existingUser.password) {
+        if (existingUser?.email && !existingUser.password) {
+            // Account exists but with either Google or GitHub
+            return { error: "You registered with a Google Or GitHub account. Kindly login with that" }
+        }
         return { error: "Invalid Credentials" }
     }
 
