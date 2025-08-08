@@ -1,4 +1,5 @@
 import {auth, signOut} from "@/auth";
+import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 export default async function SettingsPage() {
     const session = await auth();
 
@@ -11,7 +12,9 @@ export default async function SettingsPage() {
             {JSON.stringify(session)}
             <form action={async () =>{
                 "use server"
-                await signOut()
+                await signOut(
+                    {redirectTo: DEFAULT_LOGIN_REDIRECT}
+                )
             }}>
                 <button type="submit">
                     Sign Out
