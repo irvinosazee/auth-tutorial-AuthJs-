@@ -3,9 +3,10 @@ import * as z from "zod"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 
-import { register } from "@/actions/register"
-import { RegisterSchema } from "@/schemas";
+import { newPassword } from "@/actions/new-password";
+import { NewPasswordSchema } from "@/schemas";
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import FormError from "@/components/FormError"
@@ -13,75 +14,44 @@ import FormSuccess from "@/components/FormSuccess"
 import CardWrapper from "@/components/auth/CardWrapper"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 
-export default function RegisterForm(){
+export default function NewPasswordForm() {
+    const searchParams = useSearchParams()
+    const token = searchParams.get("token")
+
     const [error, setError] = useState<string | undefined>()
     const [success, setSuccess] = useState<string | undefined>()
     const [isPending, startTransition] = useTransition()
 
-    const form = useForm<z.infer<typeof RegisterSchema>>({
-        resolver: zodResolver(RegisterSchema),
+    const form = useForm<z.infer<typeof NewPasswordSchema>>({
+        resolver: zodResolver(NewPasswordSchema),
         defaultValues: {
-            email: "",
             password: "",
-            name: ""
+            confirmPassword: ""
         }
     })
 
-    const onSubmit = (values: z.infer<typeof RegisterSchema>) =>{
+    const onSubmit = (values: z.infer<typeof NewPasswordSchema>) =>{
         setError("");
         setSuccess("");
+
         
         startTransition(() => {
-            register(values)
+            newPassword(values, token)
             .then((data) =>{
-                setError(data.error)
-                setSuccess(data.success)
+                setError(data?.error)
+                setSuccess(data?.success)
             })
         })
     }
 
     return (
         <CardWrapper 
-        headerLabel="Create an account"
-        backButtonLabel="Already have an account?"
-        backButtonHref="/auth/login"
-        showSocial>
+        headerLabel="Enter a new password"
+        backButtonLabel="Back to login"
+        backButtonHref="/auth/login">
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Name</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            disabled={isPending}
-                                            placeholder="John Doe"/>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        /> 
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            disabled={isPending}
-                                            placeholder="johndoe@example.com"
-                                            type="email" />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
                         <FormField
                             control={form.control}
                             name="password"
@@ -99,14 +69,31 @@ export default function RegisterForm(){
                                 </FormItem>
                             )}
                         />
+                        <FormField
+                            control={form.control}
+                            name="confirmPassword"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Confirm Password</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            disabled={isPending}
+                                            placeholder="******"
+                                            type="password" />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                     </div>
-                    <FormError message={error}/>
+                    <FormError message={error} />
                     <FormSuccess message={success}/>
                     <Button 
                         disabled={isPending}
                         type="submit"
                         className="w-full">
-                        Create an account
+                        Reset password
                     </Button>
                 </form>
             </Form>
