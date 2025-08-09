@@ -1,25 +1,27 @@
-import {auth, signOut} from "@/auth";
-import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
-export default async function SettingsPage() {
-    const session = await auth();
+"use client";
 
-    if (!session) return null
+import { useSession } from "next-auth/react";
+// import { signOut } from "next-auth/react"; // client method import
+import { logout } from "@/actions/logout"; // server action import
 
-    console.log("Session:", session);
+export default function SettingsPage() {
+    const { data: session } = useSession();
+
+    // Client side method of using signOut
+    // const onClick = () => {
+    //     signOut();
+    // };
+    // console.log("Session:", session);
     return (
         <div>
             <h1>Settings</h1>
             {JSON.stringify(session)}
-            <form action={async () =>{
-                "use server"
-                await signOut(
-                    {redirectTo: DEFAULT_LOGIN_REDIRECT}
-                )
+            <button type="button" onClick={()=>{
+                logout(); // Using server action
+                // onClick(); // Using client method
             }}>
-                <button type="submit">
-                    Sign Out
-                </button>
-            </form>
+                Sign Out
+            </button>
         </div>
     )
 }

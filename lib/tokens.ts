@@ -8,7 +8,7 @@ import { getPasswordResetTokenByEmail } from "@/data/password-reset-token"
 
 export const generateVerificationToken = async (email: string) => {
     const token = uuidv4();
-    const expires = new Date(new Date().getTime() + 15 * 60 * 1000); // 15 minutes expiration
+    const expires = new Date(new Date().getTime() + 5 * 60 * 1000); // 15 minutes expiration
 
     
 
