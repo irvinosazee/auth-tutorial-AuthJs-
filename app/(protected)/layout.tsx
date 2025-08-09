@@ -1,14 +1,21 @@
 import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
+// Update the import path to the correct relative location
+import Navbar from "@/components/Navbar";
+
+interface ProtectedLayoutProps {
+    children: React.ReactNode;
+}
 export default async function ProtectedLayout({
     children,
-}: {
-    children: React.ReactNode;
-}) {
+}: ProtectedLayoutProps) {
     const session = await auth();
     return (
-        <SessionProvider session={session}>
-            {children}
-        </SessionProvider>
+        <div className="h-full w-full flex flex-col gap-y-10 justify-center items-center">
+            <SessionProvider session={session}>
+                <Navbar/>
+                {children}
+            </SessionProvider>
+        </div>
     );
 }
