@@ -5,12 +5,10 @@ import {
     CardContent
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ExtendedUser } from "@/next-auth";
 
 interface UserInfoProps {
-    user?: User & {
-        role: "ADMIN" | "USER";
-        isTwoFactorEnabled: boolean;
-    };
+    user?: ExtendedUser;
     label: string;
 }
 export default function UserInfo({ user, label }: UserInfoProps) {

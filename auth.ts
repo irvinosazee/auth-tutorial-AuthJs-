@@ -5,6 +5,7 @@ import authConfig from "@/auth.config"
 import { db } from "@/lib/db"
 import { getUserById } from "@/data/user"
 import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation"
+import { getAccountByUserId } from "./actions/accounts"
 
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -65,15 +66,28 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             if (session.user) {
                 session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
             }
-            console.log({ sessionToken: token })
+
+            if (session.user && token.name && token.email) {
+                session.user.name = token.name;
+                session.user.email = token.email;
+                session.user.isOAuth = token.isOAuth as boolean;  
+            }
+
             return session;
         },
         async jwt({ token }) {
             if (!token.sub) return token;
             const existingUser = await getUserById(token.sub)
             if (!existingUser) return token;
+
+            const existingAccount = await getAccountByUserId(existingUser.id)
+
             token.role = existingUser.role
+            token.name = existingUser.name
+            token.email = existingUser.email
             token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled
+            token.isOAuth = !!existingAccount;
+
             return token
         },
     }, 
