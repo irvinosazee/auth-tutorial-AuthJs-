@@ -34,7 +34,7 @@ This project demonstrates how to implement authentication using NextAuth.js in a
 1. Clone the repository:
    ```bash
    git clone https://github.com/irvinosazee/auth-tutorial-AuthJs-v5.git
-   cd auth-tutorial-AuthJs-
+   cd auth-tutorial-AuthJs-v5
    ```
 
 2. Install dependencies:
