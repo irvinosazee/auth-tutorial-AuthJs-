@@ -4,6 +4,7 @@ import * as z from "zod"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 
 import { login } from "@/actions/login"
 import { LoginSchema } from "@/schemas";
@@ -13,9 +14,11 @@ import FormError from "@/components/FormError"
 import FormSuccess from "@/components/FormSuccess"
 import CardWrapper from "@/components/auth/CardWrapper"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import Link from "next/link";
+import Link from "next/link"; 
 
 export default function LoginForm() {
+    const searchParams = useSearchParams();
+    const callbackUrl = searchParams.get("callbackUrl");
     const [showTwoFactor, setShowTwoFactor] = useState(false)
     const [error, setError] = useState<string | undefined>()
     const [success, setSuccess] = useState<string | undefined>()
@@ -34,8 +37,8 @@ export default function LoginForm() {
         setError("");
         setSuccess("");
         startTransition(() => {
-            login(values)
-            .then((data) =>{
+            login(values, callbackUrl)
+                .then((data) => {
                 if (data?.error) {
                     form.reset()
                     setError(data?.error)

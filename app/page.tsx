@@ -13,7 +13,7 @@ export default function Home() {
           A simple authentication service
         </p>
         <div>
-          <LoginButton >
+          <LoginButton mode="modal" asChild>
             <Button variant="secondary" size="lg" className="cursor-pointer"> Sign in</Button>
           </LoginButton>
         </div>

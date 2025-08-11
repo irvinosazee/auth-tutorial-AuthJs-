@@ -21,9 +21,14 @@ export default auth((req) => {
         return null
     };
     if (!isLoggedIn && !isPublicRoute) {
-            return Response.redirect(new URL("/auth/login", nextUrl))
+        let callbackUrl = nextUrl.pathname;
+        if (nextUrl.search) {
+            callbackUrl += nextUrl.search
         }
-    return null 
+        const encodedCallbackUrl = encodeURIComponent(callbackUrl);
+        return Response.redirect(new URL(`/auth/login?callbackUrl=${encodedCallbackUrl}`, nextUrl))
+    }
+    return null
 })
 
 // export { auth as middleware } from "@/auth"
