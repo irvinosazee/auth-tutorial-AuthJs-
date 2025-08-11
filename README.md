@@ -21,6 +21,9 @@ This project demonstrates how to implement authentication using NextAuth.js in a
 - **`routes.ts`**: Defines public and protected routes.
 - **`middleware.ts`**: Middleware for handling authentication and route protection.
 
+## Credits 
+- **YouTube Video**: [Next Auth V5 - Advanced Guide](https://youtu.be/1MTyCvS05V4?si=M1XpD-HNwpwHAvwa)
+
 ## Getting Started
 
 ### Prerequisites
